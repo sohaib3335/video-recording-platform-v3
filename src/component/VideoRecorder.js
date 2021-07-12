@@ -32,17 +32,17 @@ export default function VideoRecorder() {
     setOpenWebcam(false);
   };
 
-  const uploadVidToServer = async () => {
+  const uploadVidToServer = async (clearBlobUrl) => {
     var reader = new FileReader();
     reader.readAsDataURL(videoBlob);
     reader.onloadend = async function () {
       var base64data = reader.result;
       // console.log(base64data);
-      await postVideoToServer(base64data);
+      await postVideoToServer(base64data, clearBlobUrl);
     };
   };
 
-  const postVideoToServer = async (base64data) => {
+  const postVideoToServer = async (base64data, clearBlobUrl) => {
     let data = {
       videoBase64Str: base64data,
     };
@@ -55,9 +55,11 @@ export default function VideoRecorder() {
     console.log(req.data);
     if(req.data.test === "success 123") {
       setUploading({isUploading: false, uploadStatusMsg: "Congrats! Video upload successfully "});
+      clearBlobUrl();
     } else {
       setUploading({isUploading: false, uploadStatusMsg: "Sorry, something went wrong. Please, try again!"});
-      console.log("Sorry, something went wrong. Please, try again!")
+      console.log("Sorry, something went wrong. Please, try again!");
+      clearBlobUrl();
     }
 
   };
@@ -70,6 +72,8 @@ export default function VideoRecorder() {
           let blob = await fetch(blobUrl).then((r) => r.blob());
           console.log(blob);
           setVideoBlob(blob);
+          // removes any previous message shown to the user 
+          setUploading({uploadStatusMsg: ""});
         }}
         video={true}
         render={({
@@ -78,6 +82,7 @@ export default function VideoRecorder() {
           stopRecording,
           mediaBlobUrl,
           previewStream,
+          clearBlobUrl
         }) => (
           <div id="VideoRecorderContainer">
             <h5>Status: {status.toUpperCase()}</h5>
@@ -129,7 +134,7 @@ export default function VideoRecorder() {
             </div>
             <div>
               {mediaBlobUrl ? (
-                <button onClick={uploadVidToServer}>Upload</button>
+                <button onClick={() => {uploadVidToServer(clearBlobUrl)} }>Upload</button>
               ) : (
                 <button onClick={uploadVidToServer} disabled>
                   Upload
@@ -139,9 +144,9 @@ export default function VideoRecorder() {
           {/* Video Upload status  */}
             <div>
                 {uploading.isUploading ? (
-                  <p>{uploading.uploadStatusMsg}</p>
+                  <p>{status === 'recording' ? "" : uploading.uploadStatusMsg}</p>
                 ) : (
-                  <p>{uploading.uploadStatusMsg}</p>
+                  <p>{status === 'recording' ? "" : uploading.uploadStatusMsg}</p>
                 )}
             </div>
           </div>
