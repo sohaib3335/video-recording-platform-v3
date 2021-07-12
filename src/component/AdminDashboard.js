@@ -12,18 +12,25 @@ export default function AdminDashboard() {
       let URL = `${ApiUrl}/video/get/allVideos`;
       let result = await axios.get(URL);
       console.log(result.data);
+      
+     
       setVideosData(result.data);
     };
 
     getVideosData();
   }, []);
 
+  const getQatarTime = (theDate) => {
+    let qatarTime = new Date(Date.parse(theDate));
+    return qatarTime.toLocaleString();
+  }
+
   return (
     <div style={{ textAlign: "center" }}>
       <h1>Admin Dashboard</h1>
       {videosData.videosData.map((video, i) => (
         <div key={i}>
-          <p>Date and Time Uploaded: {video.date_posted}</p>
+          <p>Date and Time Uploaded: {getQatarTime(video.date_posted)}</p>
           <p>Name of Video: {video.recording_name}</p>
           
           <div style={{ width: "35%", margin: "5%" }}>
