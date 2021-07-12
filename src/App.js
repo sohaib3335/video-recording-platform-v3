@@ -2,7 +2,6 @@ import logo from "./logo.svg";
 import "./App.css";
 import VideoRecorder from "./component/VideoRecorder";
 import AdminDashboard from "./component/AdminDashboard";
-import AppStreamCam from "./component/CameraStream";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 function App() {
